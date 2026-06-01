@@ -6,15 +6,30 @@
  */
 
 import { loadAssets } from './assets/assetLoader.js';
+import { setActiveManifest } from './assets/assetManifest.js';
+import {
+    loadStyleList, loadStyleManifest, setActiveStyleId, DEFAULT_STYLE_ID,
+    resolveStyleId,
+} from './assets/styleRegistry.js';
 import { Game } from './core/Game.js';
 import { UIManager } from './ui/UIManager.js';
 import { loadUiAudio } from './ui/Audio.js';
+import { readSavedStyleId } from './storage/SaveSystem.js';
 
 async function main() {
     const fill = document.getElementById('loading-fill');
     const status = document.getElementById('loading-status');
     const loadingScreen = document.getElementById('loading-screen');
     const app = document.getElementById('app');
+
+    // Discover available styles, then activate the saved one (or default).
+    const styles = await loadStyleList();
+    const savedStyle = resolveStyleId(readSavedStyleId());
+    const startStyle = styles.find(s => s.id === savedStyle)?.id
+        ?? styles[0]?.id
+        ?? DEFAULT_STYLE_ID;
+    setActiveStyleId(startStyle);
+    setActiveManifest(await loadStyleManifest(startStyle));
 
     await loadAssets((p, label) => {
         fill.style.width = `${Math.round(p * 100)}%`;

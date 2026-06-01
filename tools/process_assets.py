@@ -15,9 +15,9 @@ That's it. No checker-keying, no recoloring, no downscaling. The pixels
 that ship to the game are exactly the pixels you saw in the source — just
 re-cropped tight.
 
-Sources are read from   assets/raw/        (originals you've cleaned)
-                  or    assets/raw_pending/ (newly generated, awaiting cleanup)
-Outputs are written to  assets/
+Sources are read from   asset-sources/raw/        (originals you've cleaned)
+                  or    asset-sources/raw_pending/ (newly generated, awaiting cleanup)
+Outputs are written to  assets/flower/
 
 Usage:
     python3 tools/process_assets.py                 # process everything in raw/
@@ -35,9 +35,12 @@ from pathlib import Path
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
-ASSETS = ROOT / "assets"
-RAW = ASSETS / "raw"
-PENDING = ASSETS / "raw_pending"
+# Runtime images for the built-in style live in assets/flower/.
+ASSETS = ROOT / "assets" / "flower"
+# Source / intermediate art is kept OUT of the runtime assets/ tree.
+SOURCES = ROOT / "asset-sources"
+RAW = SOURCES / "raw"
+PENDING = SOURCES / "raw_pending"
 
 ALPHA_THRESHOLD = 8     # alpha values <= this are treated as fully transparent
 SAFETY_PAD = 2          # px of empty space kept around the trimmed object
@@ -87,7 +90,7 @@ def main(argv: list[str]) -> int:
     parser.add_argument("files", nargs="*", help="specific filenames to process")
     parser.add_argument(
         "--pending", action="store_true",
-        help="read from assets/raw_pending/ instead of assets/raw/",
+        help="read from asset-sources/raw_pending/ instead of asset-sources/raw/",
     )
     parser.add_argument(
         "--source", type=Path, default=None,
@@ -129,7 +132,7 @@ def main(argv: list[str]) -> int:
 
 
 def stage_existing_to_raw() -> int:
-    """One-time helper: move loose PNGs in assets/ into assets/raw/."""
+    """One-time helper: move loose PNGs in assets/flower/ into asset-sources/raw/."""
     RAW.mkdir(parents=True, exist_ok=True)
     moved = 0
     for png in ASSETS.glob("*.png"):
@@ -144,6 +147,6 @@ def stage_existing_to_raw() -> int:
 if __name__ == "__main__":
     if len(sys.argv) >= 2 and sys.argv[1] == "--stage":
         n = stage_existing_to_raw()
-        print(f"moved {n} loose PNGs into assets/raw/")
+        print(f"moved {n} loose PNGs into asset-sources/raw/")
         sys.exit(0)
     sys.exit(main(sys.argv[1:]))

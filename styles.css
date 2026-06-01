@@ -253,7 +253,8 @@ html, body {
 #palette {
     position: fixed;
     right: 12px;
-    top: 12px;
+    /* Sits under #dream-panel on the right rail. */
+    top: calc(var(--edge-gap) + 42vh + 10px);
     bottom: 92px;
     width: 168px;
     background: var(--paper);
@@ -757,4 +758,173 @@ html, body {
     .ins-grid--touch { display: grid; }
     /* Touch devices often have a crosshair-incompatible cursor. */
     #game-canvas { cursor: default; }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Dream Panel — style switcher + timeline + town library.
+   ───────────────────────────────────────────────────────────── */
+#dream-panel {
+    position: fixed;
+    /* Right rail, top. The asset palette sits below it (its `top` is pushed
+       down to clear this panel) so the two share the right edge without
+       overlapping the left control column. */
+    top: var(--edge-gap);
+    right: 12px;
+    width: 168px;
+    max-height: 42vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px;
+    background: var(--paper);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    z-index: 11;
+    font-size: 12px;
+    color: var(--ink);
+}
+.dp-section { display: flex; flex-direction: column; gap: 7px; }
+.dp-section + .dp-section { border-top: 1px solid var(--line); padding-top: 9px; }
+.dp-label {
+    font-weight: 700; font-size: 11px; letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--muted);
+    display: flex; align-items: center; justify-content: space-between;
+}
+.dp-mini {
+    border: 1px solid var(--line); background: var(--cream);
+    border-radius: 999px; padding: 2px 10px; font-size: 10px;
+    cursor: pointer; color: var(--ink-soft); font-weight: 600;
+}
+.dp-mini:hover { background: var(--cream-2); }
+.dp-style-list { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.dp-style {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    border: 2px solid var(--line); background: var(--cream);
+    border-radius: var(--radius-sm); padding: 6px 4px; cursor: pointer;
+    font-size: 11px; font-weight: 600; color: var(--ink-soft);
+    transition: border-color .12s, background .12s;
+}
+.dp-style img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; }
+.dp-style:hover { background: var(--cream-2); }
+.dp-style.active { border-color: var(--cobalt); background: var(--cobalt-light); color: var(--cobalt); }
+.dp-tl-body { display: flex; flex-direction: column; gap: 8px; }
+.dp-tl-row { display: flex; align-items: center; justify-content: space-between; }
+.dp-play {
+    border: none; background: var(--cobalt); color: #fff;
+    border-radius: 999px; padding: 5px 14px; font-weight: 700;
+    cursor: pointer; font-size: 12px;
+}
+.dp-play:hover { background: var(--cobalt-2); }
+.dp-pct { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--cobalt); }
+.dp-range { width: 100%; accent-color: var(--cobalt); }
+.dp-stages { display: flex; gap: 2px; }
+.dp-stage {
+    flex: 1; min-width: 0; text-align: center;
+    background: var(--cream-2); border-radius: 5px; padding: 3px 1px;
+    font-size: 8px; line-height: 1.1; color: var(--muted);
+    display: flex; flex-direction: column; gap: 1px; overflow: hidden;
+    transition: background .12s, color .12s;
+}
+.dp-stage span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dp-stage small { font-weight: 700; font-size: 9px; }
+.dp-stage.reached { background: var(--cobalt-light); color: var(--cobalt); }
+.dp-lib-actions { display: flex; gap: 5px; }
+.dp-btn {
+    flex: 1; text-align: center; border: 1px solid var(--line);
+    background: var(--cream); border-radius: var(--radius-sm);
+    padding: 6px 4px; font-size: 11px; font-weight: 600;
+    cursor: pointer; color: var(--ink-soft);
+}
+.dp-btn:hover { background: var(--cream-2); }
+.dp-import { position: relative; }
+.dp-lib-list { display: flex; flex-direction: column; gap: 5px; }
+.dp-empty { color: var(--muted); font-size: 11px; font-style: italic; padding: 2px 0; }
+.dp-lib-row { display: flex; gap: 5px; align-items: stretch; }
+.dp-lib-load {
+    flex: 1; text-align: left; border: 1px solid var(--line);
+    background: var(--cream); border-radius: var(--radius-sm);
+    padding: 5px 8px; cursor: pointer; display: flex; flex-direction: column;
+    gap: 1px; min-width: 0;
+}
+.dp-lib-load strong { font-size: 12px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dp-lib-load small { font-size: 10px; color: var(--muted); }
+.dp-lib-load:hover { background: var(--cream-2); }
+.dp-lib-del {
+    border: 1px solid var(--line); background: var(--cream);
+    border-radius: var(--radius-sm); width: 28px; cursor: pointer;
+    color: var(--muted); font-size: 12px;
+}
+.dp-lib-del:hover { color: var(--terracotta); background: var(--cream-2); }
+.hidden { display: none !important; }
+
+@media (max-width: 760px) {
+    #dream-panel {
+        /* On small screens the bottom palette + HUD dominate; dock the dream
+           panel top-center as a compact strip so it doesn't fight the rails. */
+        top: calc(10px + env(safe-area-inset-top));
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(320px, calc(100vw - 20px));
+        max-height: 46vh;
+        padding: 9px; gap: 7px;
+    }
+}
+
+/* Landscape phone: the palette returns to the right edge, so dock the dream
+   panel top-LEFT-of-center and keep it short to avoid colliding with it. */
+@media (max-height: 480px) and (orientation: landscape) {
+    #dream-panel {
+        left: 50%;
+        transform: translateX(-60%);
+        top: calc(6px + env(safe-area-inset-top));
+        width: min(280px, 46vw);
+        max-height: 78vh;
+        padding: 7px; gap: 6px;
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Timeline preview mode — make it unmistakable that editing is
+   paused and the town is being PREVIEWED, not changed.
+   ───────────────────────────────────────────────────────────── */
+.dp-tl-note {
+    font-size: 10.5px;
+    line-height: 1.35;
+    color: var(--ink-soft);
+    background: var(--cobalt-light);
+    border-radius: 8px;
+    padding: 6px 8px;
+}
+.dp-tl-edit {
+    margin-top: 2px;
+    background: var(--cobalt) !important;
+    color: #fff !important;
+    border: none !important;
+    font-weight: 700;
+}
+.dp-tl-edit:hover { background: var(--cobalt-2) !important; }
+
+/* While previewing: dim + disable the editing rails so stray clicks are
+   obviously inert, and show a banner. The Dream Panel itself stays bright. */
+body.timeline-preview #toolbar,
+body.timeline-preview #palette {
+    opacity: 0.4;
+    filter: grayscale(0.4);
+    pointer-events: none;
+}
+body.timeline-preview #toolbar { transition: opacity .15s; }
+body.timeline-preview::after {
+    content: '👁 Preview mode — editing paused';
+    position: fixed;
+    top: 0; left: 50%; transform: translateX(-50%);
+    background: var(--cobalt);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 16px;
+    border-radius: 0 0 12px 12px;
+    box-shadow: var(--shadow);
+    z-index: 50;
+    pointer-events: none;
 }

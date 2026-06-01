@@ -12,10 +12,15 @@ import { Renderer } from './Renderer.js';
 import { InputManager } from './InputManager.js';
 import { TileMap } from '../grid/TileMap.js';
 import { PlacementSystem } from '../building/PlacementSystem.js';
-import { ASSET_INDEX, ASSET_MANIFEST } from '../assets/assetManifest.js';
-import { SaveSystem } from '../storage/SaveSystem.js';
+import { PlacedObject } from '../building/PlacedObject.js';
+import { ASSET_INDEX, ASSET_MANIFEST, setActiveManifest } from '../assets/assetManifest.js';
+import { reloadAssets } from '../assets/assetLoader.js';
+import { loadStyleManifest, setActiveStyleId, getActiveStyleId } from '../assets/styleRegistry.js';
+import { SaveSystem, readSavedBuildOrder } from '../storage/SaveSystem.js';
 import { cellToScreen } from '../grid/IsoGrid.js';
 import { playPlacementFor } from '../ui/Audio.js';
+import { TimelineController } from '../timeline/TimelineController.js';
+import { computeBuildOrder } from '../timeline/BuildOrder.js';
 
 export class Game {
     constructor(canvas, ui = null) {
@@ -25,6 +30,7 @@ export class Game {
         this.renderer = new Renderer(canvas, this.camera, this.tileMap);
         this.placement = new PlacementSystem(this.tileMap);
         this.input = new InputManager(canvas, this.camera, this);
+        this.timeline = new TimelineController(this);
 
         // Any camera mutation (pan/zoom/recenter) needs the next frame
         // re-rendered. The renderer itself is otherwise idle.
@@ -127,7 +133,12 @@ export class Game {
     }
 
     save() {
-        const ok = SaveSystem.save(this.tileMap, this.camera);
+        // Always persist the COMPLETE town, even if the timeline preview is
+        // currently showing a partial build. _withFullTown guarantees the
+        // live TileMap holds the full layout for the duration of the save.
+        const ok = this._withFullTown(() => SaveSystem.save(
+            this.tileMap, this.camera, this.styleId, this._buildOrderKeys(),
+        ));
         this.ui?.showToast(ok ? 'Saved your island' : 'Save failed');
     }
 
@@ -137,12 +148,151 @@ export class Game {
         return ok;
     }
 
+    /**
+     * Run `fn` with the live TileMap holding the FULL town, then restore
+     * whatever state was showing before. While in timeline preview the live
+     * map only holds a partial build, so save/export temporarily swap the
+     * full snapshot in, serialize, and swap the preview back — the user sees
+     * no flicker and never persists a half-built town.
+     */
+    _withFullTown(fn) {
+        if (!this.timeline.active) return fn();
+        const full = this.timeline.getFullSnapshot();
+        const previewPercent = this.timeline.percent;
+        // Swap full town in.
+        this.tileMap.deserialize(full, d => new PlacedObject(d));
+        try {
+            return fn();
+        } finally {
+            // Swap the preview back exactly as it was.
+            this.timeline.applyProgress(previewPercent);
+        }
+    }
+
+    /** Current build-order step keys (for persistence), computed on demand. */
+    _buildOrderKeys() {
+        try {
+            return computeBuildOrder(this.tileMap, ASSET_INDEX).steps.map(s => s.key);
+        } catch { return null; }
+    }
+
+    /* Timeline (0->100 build order) — a NON-DESTRUCTIVE preview mode. */
+
+    enterTimeline() {
+        const order = this.timeline.enter(ASSET_INDEX);
+        this.timeline.applyProgress(100);
+        this.ui?.update();
+        return order;
+    }
+
+    setTimelineProgress(percent) {
+        this.timeline.applyProgress(percent);
+    }
+
+    exitTimeline() {
+        this.timeline.exit();
+        this.ui?.update();
+    }
+
+    isTimelineActive() {
+        return this.timeline.active;
+    }
+
+    /**
+     * Called when the user tries to edit (place/erase) while the timeline
+     * preview is open. We don't silently apply the edit to a partial build;
+     * instead we tell them to exit preview first. The Dream Panel also offers
+     * an explicit "Edit" exit, so this is the safety net for stray clicks.
+     */
+    _bumpTimelineEditAttempt() {
+        this.ui?.showToast('Previewing build — click “Edit” to make changes');
+    }
+
+    /* Named dream-town saves + export */
+
+    saveTown(name) {
+        const ok = this._withFullTown(() => SaveSystem.saveTown(
+            name, this.tileMap, this.camera, this.styleId, this._buildOrderKeys(),
+        ));
+        this.ui?.showToast(ok ? `Saved “${name}”` : 'Save failed');
+        return ok;
+    }
+
+    async loadTown(name) {
+        // Loading replaces the whole world; never do it mid-preview.
+        if (this.timeline.active) this.exitTimeline();
+        const town = SaveSystem.getTown(name);
+        if (!town) { this.ui?.showToast('Town not found'); return false; }
+        if (town.style && town.style !== this.styleId) {
+            await this.switchStyle(town.style);
+        }
+        SaveSystem.applyTown(town, this.tileMap, this.camera);
+        this.renderer.rebuildAll();
+        this.ui?.update();
+        this.ui?.showToast(`Loaded “${name}”`);
+        return true;
+    }
+
+    exportTownObject(name) {
+        return this._withFullTown(() => SaveSystem.exportTown(
+            name, this.tileMap, this.camera, this.styleId, this._buildOrderKeys(),
+        ));
+    }
+
     reset() {
+        if (this.timeline.active) this.exitTimeline();
         this.tileMap.clearAll();
         SaveSystem.clear();
         this._centerCamera();
         this.renderer.markDirty();
         this.ui?.showToast('World reset');
+    }
+
+    get styleId() {
+        return getActiveStyleId();
+    }
+
+    async switchStyle(styleId, onProgress = () => {}) {
+        if (styleId === getActiveStyleId() && ASSET_MANIFEST.length) return true;
+        if (this.timeline.active) this.exitTimeline();
+        try {
+            const manifest = await loadStyleManifest(styleId);
+            setActiveManifest(manifest);
+            setActiveStyleId(styleId);
+            await reloadAssets(onProgress);
+            this._pruneToManifest();
+            if (!ASSET_INDEX[this.selectedAssetId]) {
+                const first = ASSET_MANIFEST.find(a => a.category === this.category)
+                    ?? ASSET_MANIFEST[0];
+                if (first) {
+                    this.selectedAssetId = first.id;
+                    this.category = first.category;
+                }
+            }
+            this.renderer.rebuildAll();
+            this.ui?.palette?.rebuild();
+            this.ui?.update();
+            return true;
+        } catch (e) {
+            console.error('Style switch failed:', e);
+            this.ui?.showToast(`Couldn't load "${styleId}"`);
+            return false;
+        }
+    }
+
+    _pruneToManifest() {
+        const tm = this.tileMap;
+        for (let i = tm.objects.length - 1; i >= 0; i--) {
+            if (!ASSET_INDEX[tm.objects[i].assetId]) {
+                tm.removeObjectAt(tm.objects[i].gx, tm.objects[i].gy);
+            }
+        }
+        for (let i = 0; i < tm.terrain.length; i++) {
+            const id = tm.terrain[i];
+            if (id && !ASSET_INDEX[id]) tm.terrain[i] = null;
+        }
+        tm.terrainVersion++;
+        tm.objectsVersion++;
     }
 
     /**
@@ -156,6 +306,7 @@ export class Game {
      * Returns the number of cells that were actually filled.
      */
     fillGrass() {
+        if (this.timeline.active) { this._bumpTimelineEditAttempt(); return 0; }
         const W = this.tileMap.width;
         const H = this.tileMap.height;
         // Same wave timing as the starter scene reveal so the two feel
@@ -186,6 +337,13 @@ export class Game {
         const prev = this.renderer.hoverCell;
         const sameCell = prev && prev.gx === cell.gx && prev.gy === cell.gy;
         this.renderer.hoverCell = cell;
+        if (this.timeline.active) {
+            // Preview mode: no placement/erase ghost.
+            this.renderer.previewAssetId = null;
+            this.renderer.previewValid = true;
+            if (!sameCell) this.renderer.markDirty();
+            return;
+        }
         if (this.tool === 'erase') {
             this.renderer.previewAssetId = null;
             this.renderer.previewValid = !!this.tileMap.objectAt(cell.gx, cell.gy)
@@ -205,6 +363,7 @@ export class Game {
 
     onPrimaryClick(gx, gy) {
         if (!this.tileMap.inBounds(gx, gy)) return;
+        if (this.timeline.active) { this._bumpTimelineEditAttempt(); return; }
         if (this.tool === 'erase') {
             // Capture what's about to be removed so we can pick the right
             // SFX (water erase splashes, everything else thuds).
@@ -244,6 +403,7 @@ export class Game {
     onSecondaryClick(gx, gy) {
         // Right click always erases.
         if (!this.tileMap.inBounds(gx, gy)) return;
+        if (this.timeline.active) { this._bumpTimelineEditAttempt(); return; }
         const objHere = this.tileMap.objectAt(gx, gy);
         const terrainHere = this.tileMap.getTerrain(gx, gy);
         const targetId = objHere ? objHere.assetId : terrainHere;

@@ -20,6 +20,16 @@ export class AssetPalette {
         this._renderGrid();
     }
 
+    /**
+     * Rebuild tabs + swatch grid from the (possibly changed) live manifest.
+     * Called after a style switch so swatches show the new style's bitmaps.
+     */
+    rebuild() {
+        this.tabButtons.clear();
+        this._buildTabs();
+        this._renderGrid();
+    }
+
     _buildTabs() {
         this.tabsEl.innerHTML = '';
         for (const c of CATEGORIES) {

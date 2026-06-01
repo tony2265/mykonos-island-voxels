@@ -7,6 +7,7 @@
 import { Toolbar } from './Toolbar.js';
 import { AssetPalette } from './AssetPalette.js';
 import { HUD } from './HUD.js';
+import { DreamPanel } from './DreamPanel.js';
 import { playUiClick } from './Audio.js';
 
 export class UIManager {
@@ -19,6 +20,8 @@ export class UIManager {
             game,
         );
         this.hud = new HUD(game);
+        const dreamMount = document.getElementById('dream-panel');
+        this.dream = dreamMount ? new DreamPanel(dreamMount, game) : null;
         this.toast = document.getElementById('toast');
 
         // The Controls cheatsheet is a native <details> disclosure: clicking
@@ -33,11 +36,13 @@ export class UIManager {
         game.toolbar = this.toolbar;
         game.palette = this.palette;
         game.hud = this.hud;
+        game.dream = this.dream;
     }
 
     update() {
         this.toolbar.update();
         this.palette.update();
+        this.dream?.update();
     }
 
     showToast(text, ms = 1600) {

@@ -59,6 +59,13 @@ for (const entry of ENTRIES) {
             const name = s.split('/').pop();
             if (name === '.DS_Store') return false;
             if (name.endsWith('.webp')) return false;
+            // Never ship the leftover top-level source / intermediate art
+            // dirs (assets/raw, assets/raw_pending, assets/newAsset). These
+            // are pre-reorg leftovers; runtime art lives in assets/<style>/.
+            // Note: this matches only assets/<dir>, NOT assets/flower/newAsset.
+            const norm = s.replace(/\\/g, '/');
+            if (/\/assets\/(raw|raw_pending|newAsset)(\/|$)/.test(norm)
+                && !/\/assets\/[^/]+\/newAsset/.test(norm)) return false;
             return true;
         },
     });

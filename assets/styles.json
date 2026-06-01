@@ -1,0 +1,11 @@
+[
+  {
+    "id": "default",
+    "name": "Default",
+    "thumbnail": "default/thumbnail.png"
+  },
+  {
+    "id": "flower",
+    "name": "Flower"
+  }
+]

@@ -1,0 +1,679 @@
+{
+  "id": "default",
+  "name": "Default",
+  "description": "Original Mykonos asset pack (boona13)",
+  "thumbnail": "thumbnail.png",
+  "version": 1,
+  "assets": [
+    {
+      "id": "grass",
+      "name": "Grass",
+      "category": "terrain",
+      "kind": "terrain",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "grass.png",
+      "sizeScale": 1,
+      "tileLike": true
+    },
+    {
+      "id": "path",
+      "name": "Path",
+      "category": "terrain",
+      "kind": "terrain",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "path.png",
+      "sizeScale": 1,
+      "tileLike": true
+    },
+    {
+      "id": "sand",
+      "name": "Sand",
+      "category": "terrain",
+      "kind": "terrain",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "sand.png",
+      "sizeScale": 1,
+      "tileLike": true
+    },
+    {
+      "id": "stone",
+      "name": "Stone",
+      "category": "terrain",
+      "kind": "terrain",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "stone.png",
+      "sizeScale": 1,
+      "tileLike": true
+    },
+    {
+      "id": "water",
+      "name": "Water",
+      "category": "terrain",
+      "kind": "terrain",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "water.png",
+      "sizeScale": 1,
+      "tileLike": true
+    },
+    {
+      "id": "stairs",
+      "name": "Stairs",
+      "category": "terrain",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "stairs.png",
+      "sizeScale": 1,
+      "noShadow": true
+    },
+    {
+      "id": "sea_wall",
+      "name": "Sea Wall",
+      "category": "terrain",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "sea_wall.png",
+      "sizeScale": 0.7,
+      "noShadow": true,
+      "flatBase": true,
+      "fitCell": true
+    },
+    {
+      "id": "cypress",
+      "name": "Cypress",
+      "category": "nature",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "cypress.png",
+      "sizeScale": 0.65
+    },
+    {
+      "id": "bougainvillea",
+      "name": "Bougainvillea",
+      "category": "nature",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "bougainvillea.png",
+      "sizeScale": 0.8
+    },
+    {
+      "id": "olive",
+      "name": "Olive Tree",
+      "category": "nature",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "olive.png",
+      "sizeScale": 0.9
+    },
+    {
+      "id": "agave",
+      "name": "Agave",
+      "category": "nature",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "agave.png",
+      "sizeScale": 0.6
+    },
+    {
+      "id": "dry_grass",
+      "name": "Dry Grass",
+      "category": "nature",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "dry_grass.png",
+      "sizeScale": 0.55
+    },
+    {
+      "id": "flower_pot",
+      "name": "Flower Pot",
+      "category": "nature",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "flower_pot.png",
+      "sizeScale": 0.35
+    },
+    {
+      "id": "low_wall",
+      "name": "Low Wall",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "low_wall.png",
+      "sizeScale": 1
+    },
+    {
+      "id": "blue_railing",
+      "name": "Blue Railing",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "blue_railing.png",
+      "sizeScale": 0.65,
+      "flatBase": true,
+      "shadowStyle": "contact"
+    },
+    {
+      "id": "corner_wall",
+      "name": "Corner Wall",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "corner_wall.png",
+      "sizeScale": 1
+    },
+    {
+      "id": "gate_fence",
+      "name": "Gate Fence",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "gate_fence.png",
+      "sizeScale": 0.7,
+      "flatBase": true,
+      "shadowStyle": "contact"
+    },
+    {
+      "id": "archway",
+      "name": "Archway",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "archway.png",
+      "sizeScale": 0.9
+    },
+    {
+      "id": "lantern_post",
+      "name": "Lantern Post",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "lantern_post.png",
+      "sizeScale": 0.45
+    },
+    {
+      "id": "stone_lantern",
+      "name": "Stone Lantern",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "stone_lantern.png",
+      "sizeScale": 0.4
+    },
+    {
+      "id": "hanging_lantern",
+      "name": "Hanging Lantern",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "hanging_lantern.png",
+      "sizeScale": 0.4
+    },
+    {
+      "id": "bench",
+      "name": "Bench",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "bench.png",
+      "sizeScale": 0.5
+    },
+    {
+      "id": "signpost",
+      "name": "Signpost",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "signpost.png",
+      "sizeScale": 0.4
+    },
+    {
+      "id": "banner",
+      "name": "Banner",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "banner.png",
+      "sizeScale": 0.45
+    },
+    {
+      "id": "crate",
+      "name": "Crate",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "crate.png",
+      "sizeScale": 0.5
+    },
+    {
+      "id": "hay_bale",
+      "name": "Hay Bale",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "hay_bale.png",
+      "sizeScale": 0.55
+    },
+    {
+      "id": "storage_box",
+      "name": "Storage Box",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "storage_box.png",
+      "sizeScale": 0.55
+    },
+    {
+      "id": "wood_pile",
+      "name": "Wood Pile",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "raw/wood_pile.png",
+      "sizeScale": 0.55
+    },
+    {
+      "id": "water_bucket",
+      "name": "Water Bucket",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "water_bucket.png",
+      "sizeScale": 0.35
+    },
+    {
+      "id": "pottery_jar",
+      "name": "Pottery Jar",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "pottery_jar.png",
+      "sizeScale": 0.35
+    },
+    {
+      "id": "terracotta_pot",
+      "name": "Plant Pot",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "terracotta_pot.png",
+      "sizeScale": 0.3
+    },
+    {
+      "id": "stone_basin",
+      "name": "Stone Basin",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "stone_basin.png",
+      "sizeScale": 0.5
+    },
+    {
+      "id": "rocks",
+      "name": "Rocks",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "rocks.png",
+      "sizeScale": 0.55
+    },
+    {
+      "id": "large_rock",
+      "name": "Large Rock",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "large_rock.png",
+      "sizeScale": 0.65
+    },
+    {
+      "id": "mossy_stone",
+      "name": "Mossy Stone",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "mossy_stone.png",
+      "sizeScale": 0.45
+    },
+    {
+      "id": "flat_stone",
+      "name": "Flat Stone",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "flat_stone.png",
+      "sizeScale": 0.45
+    },
+    {
+      "id": "pebbles",
+      "name": "Pebbles",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "pebbles.png",
+      "sizeScale": 0.45
+    },
+    {
+      "id": "stone_pile",
+      "name": "Stone Pile",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "stone_pile.png",
+      "sizeScale": 0.55
+    },
+    {
+      "id": "boulder",
+      "name": "Boulder",
+      "category": "props",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "boulder.png",
+      "sizeScale": 0.75
+    },
+    {
+      "id": "small_bridge",
+      "name": "Bridge",
+      "category": "water",
+      "kind": "object",
+      "footprint": {
+        "w": 2,
+        "d": 1
+      },
+      "filename": "small_bridge.png",
+      "sizeScale": 0.95
+    },
+    {
+      "id": "well",
+      "name": "Well",
+      "category": "water",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "well.png",
+      "sizeScale": 0.55
+    },
+    {
+      "id": "garden_bed",
+      "name": "Garden Bed",
+      "category": "water",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "garden_bed.png",
+      "sizeScale": 0.95,
+      "noShadow": true,
+      "flatBase": true,
+      "fitCell": true
+    },
+    {
+      "id": "crop_patch",
+      "name": "Crop Patch",
+      "category": "water",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "crop_patch.png",
+      "sizeScale": 0.95,
+      "noShadow": true,
+      "flatBase": true,
+      "fitCell": true
+    },
+    {
+      "id": "veg_garden",
+      "name": "Veg Garden",
+      "category": "water",
+      "kind": "object",
+      "footprint": {
+        "w": 1,
+        "d": 1
+      },
+      "filename": "veg_garden.png",
+      "sizeScale": 0.95,
+      "noShadow": true,
+      "flatBase": true,
+      "fitCell": true
+    },
+    {
+      "id": "house",
+      "name": "House",
+      "category": "buildings",
+      "kind": "object",
+      "footprint": {
+        "w": 2,
+        "d": 2
+      },
+      "filename": "house.png",
+      "sizeScale": 1
+    },
+    {
+      "id": "two_story",
+      "name": "Two-Story",
+      "category": "buildings",
+      "kind": "object",
+      "footprint": {
+        "w": 3,
+        "d": 3
+      },
+      "filename": "two_story.png",
+      "sizeScale": 1
+    },
+    {
+      "id": "cube_house",
+      "name": "Cube House",
+      "category": "buildings",
+      "kind": "object",
+      "footprint": {
+        "w": 2,
+        "d": 2
+      },
+      "filename": "cube_house.png",
+      "sizeScale": 1
+    },
+    {
+      "id": "terrace_house",
+      "name": "Terrace House",
+      "category": "buildings",
+      "kind": "object",
+      "footprint": {
+        "w": 3,
+        "d": 2
+      },
+      "filename": "terrace_house.png",
+      "sizeScale": 1
+    },
+    {
+      "id": "pergola_house",
+      "name": "Pergola House",
+      "category": "buildings",
+      "kind": "object",
+      "footprint": {
+        "w": 3,
+        "d": 3
+      },
+      "filename": "pergola_house.png",
+      "sizeScale": 1
+    },
+    {
+      "id": "villa",
+      "name": "Main Villa",
+      "category": "buildings",
+      "kind": "object",
+      "footprint": {
+        "w": 4,
+        "d": 4
+      },
+      "filename": "villa.png",
+      "sizeScale": 1
+    },
+    {
+      "id": "altar",
+      "name": "Altar",
+      "category": "buildings",
+      "kind": "object",
+      "footprint": {
+        "w": 2,
+        "d": 2
+      },
+      "filename": "altar.png",
+      "sizeScale": 1
+    },
+    {
+      "id": "tower_chapel",
+      "name": "Tower Chapel",
+      "category": "buildings",
+      "kind": "object",
+      "footprint": {
+        "w": 2,
+        "d": 2
+      },
+      "filename": "tower_chapel.png",
+      "sizeScale": 1
+    },
+    {
+      "id": "main_chapel",
+      "name": "Main Chapel",
+      "category": "buildings",
+      "kind": "object",
+      "footprint": {
+        "w": 3,
+        "d": 3
+      },
+      "filename": "main_chapel.png",
+      "sizeScale": 1
+    },
+    {
+      "id": "windmill",
+      "name": "Windmill",
+      "category": "buildings",
+      "kind": "object",
+      "footprint": {
+        "w": 2,
+        "d": 2
+      },
+      "filename": "windmill.png",
+      "sizeScale": 1
+    }
+  ]
+}

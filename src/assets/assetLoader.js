@@ -14,9 +14,19 @@
  * path is never taken at runtime.
  */
 
-import { ASSET_MANIFEST } from './assetManifest.js';
+import { ASSET_MANIFEST, getAssetBaseDir } from './assetManifest.js';
 import { imageToAsset, loadImageElement } from './imageToAsset.js';
 import { renderVoxels } from './voxelRenderer.js';
+import { BUILTIN_STYLE } from './builtinMykonos.js';
+
+// Builder lookup by asset id, sourced from the built-in pack. External style
+// packs (e.g. "default") don't ship procedural builders, so when one of their
+// PNGs is missing we fall back to the matching built-in builder. This keeps a
+// style usable even before its images are downloaded.
+const _builtinBuilders = BUILTIN_STYLE.assets.reduce((m, a) => {
+    if (a.builder) m[a.id] = a.builder;
+    return m;
+}, {});
 
 let _assets = null;
 
@@ -191,6 +201,7 @@ function buildContactPoints(srcCanvas, displayW, displayH) {
 export async function loadAssets(onProgress = () => {}) {
     if (_assets) return _assets;
     const out = {};
+    const baseDir = getAssetBaseDir();
     const total = ASSET_MANIFEST.length;
     let imageCount = 0;
     let fallbackCount = 0;
@@ -207,13 +218,14 @@ export async function loadAssets(onProgress = () => {}) {
             noShadow: entry.noShadow === true,
             flatBase: entry.flatBase === true,
             shadowStyle: entry.shadowStyle ?? 'cast',
+            buildStage: entry.buildStage ?? null,
         };
 
         let record = null;
 
         if (entry.filename) {
             try {
-                const img = await loadImageElement(`assets/${entry.filename}`);
+                const img = await loadImageElement(`${baseDir}${entry.filename}`);
                 record = imageToAsset(img, entry.footprint, entry.kind, {
                     sizeScale: entry.sizeScale ?? 1,
                     tileLike:  entry.tileLike === true,
@@ -227,8 +239,9 @@ export async function loadAssets(onProgress = () => {}) {
             }
         }
 
-        if (!record && entry.builder) {
-            const voxels = entry.builder();
+        const builder = entry.builder ?? _builtinBuilders[entry.id];
+        if (!record && builder) {
+            const voxels = builder();
             record = renderVoxels(voxels, entry.footprint);
             record.source = 'procedural';
             fallbackCount++;
@@ -286,6 +299,15 @@ export async function loadAssets(onProgress = () => {}) {
 
     _assets = out;
     return _assets;
+}
+
+export function resetAssetCache() {
+    _assets = null;
+}
+
+export async function reloadAssets(onProgress = () => {}) {
+    _assets = null;
+    return loadAssets(onProgress);
 }
 
 export function getAsset(id) {

@@ -502,6 +502,18 @@ export class Renderer {
         this.markDirty();
     }
 
+    /**
+     * Invalidate every world-space cache so the next frame re-bakes terrain
+     * and static objects from scratch. Used after a style switch, where the
+     * bitmaps behind the same asset ids have been replaced.
+     */
+    rebuildAll() {
+        this._terrainVersion = -1;
+        this._objectsVersion = -1;
+        this._chromeDirty = true;
+        this.markDirty();
+    }
+
     /* ── Terrain cache ────────────────────────────────────────── */
 
     _ensureTerrainCache() {
